@@ -7,7 +7,7 @@ import Foundation
 
 // MARK: - Welcome
 struct Welcome: Codable {
-    let comment, feedback: String
+    let comment, feedback: String?
     let corrector: Corrector
     let correcteds: [Corrector]
     //let team: Team

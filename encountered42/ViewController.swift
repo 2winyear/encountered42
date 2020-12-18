@@ -50,94 +50,24 @@ class ViewController: UIViewController {
     }
     
     @IBAction func touchUpButton(_ sender: Any) {
-//        myGetId()
-//        yourGetId()
-//
-//        sleep(2)
-//        print("내 아이디 : ")
-//        print(myID)
-//        print("니 아이디 : ")
-//        print(yourID)
-    }
-    /*
-    func yourGetId(){
-            
-            let url = "https://api.intra.42.fr/v2/users/\(youTextField.text!)"
-            var request = URLRequest(url: URL(string: url)!)
-            request.httpMethod = "GET"
-            request.allHTTPHeaderFields = [
-                "Authorization": "Bearer \(self.token)"
-            ]
-            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-                guard let data = data, error == nil else {
-                    print("error")
-                    return
-                }
-                
-                if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
-                    print("statusCode should be 200, but iws \(httpStatus.statusCode)")
-                    print("response = \(String(describing: response))")
-                }
-                
-                let dataString = String(decoding: data, as: UTF8.self)
-                let dataData = Data(dataString.utf8)
-                let json = try? JSONSerialization.jsonObject(with: dataData, options: []) as? [String: AnyObject]
 
-                if let temp = json!["id"] {
-                    self.yourID = "\(temp)"
-                }
-
-            }
-            task.resume()
-        }
-    
-    func myGetId(){
-        
-        let url = "https://api.intra.42.fr/v2/users/\(meTextField.text!)"
-        var request = URLRequest(url: URL(string: url)!)
-        request.httpMethod = "GET"
-        request.allHTTPHeaderFields = [
-            "Authorization": "Bearer \(self.token)"
-        ]
-        
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-            guard let data = data, error == nil else {
-                print("error")
-                return
-            }
-            
-            if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
-                print("statusCode should be 200, but iws \(httpStatus.statusCode)")
-                print("response = \(String(describing: response))")
-            }
-            
-            let dataString = String(decoding: data, as: UTF8.self)
-            let dataData = Data(dataString.utf8)
-            let json = try? JSONSerialization.jsonObject(with: dataData, options: []) as? [String: AnyObject]
-            if let temp = json!["id"] {
-                self.myID = "\(temp)"
-            }
-        }
-        task.resume()
     }
-    */
+   
     func getToken() {
-        //1
         let parameters = [
             "grant_type": "client_credentials",
             "client_id": self.uid,
             "client_secret": self.secret]
-        //2
+
         let paramData = try! JSONSerialization.data(withJSONObject: parameters, options: [])
-        //3
       
         var request = URLRequest(url: self.apitokenUrl!)
         request.httpMethod = "POST"
         request.httpBody = paramData
-        //4
+
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue(String(paramData.count), forHTTPHeaderField: "Content-Length")
-        //5
+
         let task = URLSession.shared.dataTask(with: request) {(data, response, error) in
             guard let data = data, error == nil else {
                 print("error=\(error)")
@@ -148,19 +78,15 @@ class ViewController: UIViewController {
                 print("statusCode should be 200, but is \(httpStatus.statusCode)")
                 print("response = \(response)")
             }
-            
             let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: AnyObject]
             
-            let responseString = String(data: data, encoding: .utf8)
-            //print("responseString = \(responseString)")
+//            let responseString = String(data: data, encoding: .utf8)
             if let accessToken = json!["access_token"] {
                 self.token = accessToken as! String
                 sleep(3)
             }
-            
         }
         task.resume()
     }
-
 }
 

@@ -21,11 +21,15 @@ class SecondViewController: UIViewController {
     
     @IBOutlet weak var firstPushButton: UIButton!
     @IBOutlet weak var secondPushButton: UIButton!
+    @IBOutlet weak var correctedNumLabel: UILabel!
+    @IBOutlet weak var correctorNumLabel: UILabel!
     
     @IBOutlet weak var testLabel: UILabel!
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        correctorNumLabel.isHidden = true
+        correctedNumLabel.isHidden = true
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -38,8 +42,6 @@ class SecondViewController: UIViewController {
             return
         }
         nextViewController.myIntraId = self.myIntraId
-        
-
         nextViewController.correctedInfo = self.correctedInfo
         nextViewController.correctorInfo = self.correctorInfo
         nextViewController.yourIntraId = self.yourIntraId
@@ -47,23 +49,21 @@ class SecondViewController: UIViewController {
     
     
     @IBAction func testTouch(_ sender: Any) {
-        print("먼데")
+        print("사용자1")
         print(myIntraId)
         print(yourIntraId)
-        print("먼데2")
+        print("사용자2")
         corretedMe()
         print("위에가 평가 받은거 밑에서 평가 한거 ")
         corretorYou()
         self.firstPushButton.isHidden = true
         self.secondPushButton.isHidden = false
+        correctorNumLabel.isHidden = false
+        correctedNumLabel.isHidden = false
+        correctedNumLabel.text = "\(myIntraId)님이 총 받은 평가 수: \(correctedNum)"
+        correctorNumLabel.text = "\(myIntraId)님이 총 평가를 한 수: \(correctorNum)"
     }
-    
-    
-    //https://api.intra.42.fr/v2/users/72449/scale_teams/as_corrected
-    //https://api.intra.42.fr/v2/users/72449/scale_teams/as_corrector
-    //https://api.intra.42.fr/v2/users/72449/scale_teams/as_corrected?page[number]=3
-    
-    
+
     func corretedMe(){
         var count = 0
         var ryukim = 1
@@ -85,8 +85,6 @@ class SecondViewController: UIViewController {
                     print("statusCode should be 200, but iws \(httpStatus.statusCode)")
                     print("response = \(String(describing: response))")
                 }
-//                let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [[String: Any]]
-//                print(json)
                 
                 let hello = try? JSONDecoder().decode([Welcome].self, from: data)
                 hello?.forEach { (jaejeon) in
@@ -122,13 +120,11 @@ class SecondViewController: UIViewController {
                     print("error")
                     return
                 }
-                
                 if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
                     print("statusCode should be 200, but iws \(httpStatus.statusCode)")
                     print("response = \(String(describing: response))")
+                    
                 }
-                let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [[String: Any]]
-                
                 let hello = try? JSONDecoder().decode([Welcome].self, from: data)
                 hello?.forEach { (jaejeon) in
                     if jaejeon.correcteds[0].login == self.yourIntraId {
@@ -138,6 +134,7 @@ class SecondViewController: UIViewController {
                     tempCount += 1
                 }
                 count = tempCount
+                self.correctorNum += count
                 print(count)
             }
             task.resume()
